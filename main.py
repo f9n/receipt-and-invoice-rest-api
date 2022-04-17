@@ -44,8 +44,8 @@ def perform_healthcheck():
   '''
   return {'healthcheck': 'Everything OK!'}
 
-@app.get("/api/v1/config")
-async def get_config():
+@app.get("/api/v1/configs")
+async def get_configs():
   return {
     "product": {
       "categories": [
@@ -57,6 +57,10 @@ async def get_config():
       ]
     }
   }
+  
+@app.get("/api/v1/images/{image_id}")
+async def get_image():
+  return {"message": "Send image"}
 
 @app.post("/api/v1/ocr/receipt")
 async def ocr_from_receipt():
