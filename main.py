@@ -1,7 +1,8 @@
 from fastapi import FastAPI, status
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
-from .config import settings
+
+from config import settings
 
 app = FastAPI()
 
