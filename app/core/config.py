@@ -9,6 +9,7 @@ log = logging.getLogger("uvicorn")
 
 class Settings(BaseSettings):
     app_name: str = "Receipt Invoice OCR Rest API"
+    debug: bool = False
     ocr_service_uri: str
     mongodb_uri: str
 
