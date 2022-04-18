@@ -151,7 +151,7 @@ async def update_receipt(receipt_id: str):
 
 
 @app.delete("/api/v1/receipts/{receipt_id}")
-async def update_receipt(receipt_id: str):
+async def delete_receipt(receipt_id: str):
     return {"message": "Receipt deleted!"}
 
 
