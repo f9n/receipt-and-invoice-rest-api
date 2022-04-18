@@ -15,6 +15,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 dummy_receipts = [
     {
         "id": "6102",
@@ -69,8 +71,6 @@ dummy_receipts = [
         ],
     },
 ]
-
-app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/", include_in_schema=False)
 async def index():
