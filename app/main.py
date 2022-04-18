@@ -1,8 +1,9 @@
-from fastapi import FastAPI, status
+from fastapi import FastAPI, Depends, status
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.staticfiles import StaticFiles
 
-from config import settings
+from app.config import get_settings, Settings
 
 app = FastAPI()
 
@@ -69,15 +70,19 @@ dummy_receipts = [
     },
 ]
 
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/", include_in_schema=False)
 async def index():
     return RedirectResponse("/docs")
 
-
 @app.get("/ping")
-async def pong():
-    return {"ping": "pong!"}
+async def pong(settings: Settings = Depends(get_settings)):
+    return {
+        "ping": "pong!",
+        "app_name": settings.app_name,
+        "ocr_service_uri": settings.ocr_service_uri
+    }
 
 
 @app.get("/healthcheck", status_code=status.HTTP_200_OK)
