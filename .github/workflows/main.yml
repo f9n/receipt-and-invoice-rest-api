@@ -3,7 +3,7 @@ name: Deploy
 on:
   push:
     branches:
-      - master
+      - main
 
 env:
   PROJECT_NAME: receipt-and-invoice-rest-api
