@@ -1,7 +1,9 @@
-from fastapi import FastAPI, Depends, UploadFile, File, status
+import time
+
+from fastapi import FastAPI, Request, Depends, UploadFile, File, status
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
-from starlette.staticfiles import StaticFiles
+from fastapi.staticfiles import StaticFiles
 
 from app.config import get_settings, Settings
 
@@ -26,6 +28,15 @@ app.add_middleware(
 #     await database.disconnect()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    process_time = time.time() - start_time
+    print(f"request processed in {process_time} s")
+    return response
 
 
 @app.get("/", include_in_schema=False)

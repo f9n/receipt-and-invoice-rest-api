@@ -10,7 +10,8 @@ class Product(BaseModel):
 
 
 class Receipt(BaseModel):
-    id: str | None = Field(None, alias="_id")
+    # id: str | None = Field(None, alias="_id")
+    id: str
     receipt_image_id: str
     receipt_created_date: str
     firm: str

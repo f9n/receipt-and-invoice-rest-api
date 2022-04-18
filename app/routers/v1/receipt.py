@@ -4,7 +4,7 @@ from app.models import Receipt
 
 router = APIRouter()
 
-dummy_receipts = [
+dummy_receipts: list[Receipt] = [
     {
         "id": "6102",
         "receipt_image_id": "61",
