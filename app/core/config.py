@@ -8,7 +8,7 @@ log = logging.getLogger("uvicorn")
 
 
 class CommonSettings(BaseSettings):
-    APP_NAME: str = "Receipt Invoice OCR Rest API"
+    APP_NAME: str = "Receipt N' Invoice OCR Rest API"
     DEBUG_MODE: bool = False
 
 
