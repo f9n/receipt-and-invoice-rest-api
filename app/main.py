@@ -1,15 +1,18 @@
 import time
 
-from fastapi import FastAPI, Request, Depends, UploadFile, File, status
+from fastapi import FastAPI, Request, Depends, status
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+import motor
+import beanie
 
-from app.core.config import get_settings, Settings
-
+from app.core.config import settings
+from app.models import ReceiptDB
 from app.routers import v1
+from . import __version__
 
-app = FastAPI()
+app = FastAPI(title=settings.APP_NAME, debug=settings.DEBUG_MODE, version=__version__)
 
 app.add_middleware(
     CORSMiddleware,
@@ -18,14 +21,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# @app.on_event("startup")
-# async def startup():
-#     await database.connect()
-
-# @app.on_event("shutdown")
-# async def shutdown():
-#     await database.disconnect()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -45,11 +40,11 @@ async def index():
 
 
 @app.get("/ping")
-async def pong(settings: Settings = Depends(get_settings)):
+# async def pong(settings: Settings = Depends(get_settings)):
+async def pong():
     return {
         "ping": "pong!",
-        "app_name": settings.app_name,
-        "ocr_service_uri": settings.ocr_service_uri,
+        "ocr_service_url": settings.OCR_SERVICE_URL,
     }
 
 
@@ -76,9 +71,18 @@ def perform_healthcheck():
     return {"healthcheck": "Everything OK!"}
 
 
-@app.post("/upload")
-def upload_file(file: UploadFile = File(...)):
-    return {"name": file.filename}
+@app.on_event("startup")
+async def app_init():
+    app.mongodb_client = motor.motor_asyncio.AsyncIOMotorClient(settings.MONGODB_URL)
+
+    await beanie.init_beanie(
+        database=app.mongodb_client[settings.MONGODB_DB_NAME],
+        document_models=[ReceiptDB],
+    )
+
+    app.include_router(v1.router, prefix="/api/v1")
 
 
-app.include_router(v1.router, prefix="/api/v1")
+@app.on_event("shutdown")
+async def app_shutdown():
+    app.mongodb_client.close()

@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, UploadFile, File
 
 from .receipt import router as receipt_router
 from .ocr import router as ocr_router
@@ -18,6 +18,11 @@ async def get_configs():
 @router.get("/images/{image_id}")
 async def get_image():
     return {"message": "Send image"}
+
+
+@router.post("/upload")
+def upload_file(file: UploadFile = File(...)):
+    return {"name": file.filename}
 
 
 router.include_router(
