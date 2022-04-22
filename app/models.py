@@ -1,8 +1,7 @@
 import enum
-import uuid
 
-from pydantic import BaseModel, Field
-from beanie import Document, PydanticObjectId
+from pydantic import BaseModel
+from beanie import Document
 
 from .utils import to_camel
 

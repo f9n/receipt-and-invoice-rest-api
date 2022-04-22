@@ -1,6 +1,6 @@
 import time
 
-from fastapi import FastAPI, Request, Depends, status
+from fastapi import FastAPI, Request, status
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -40,7 +40,6 @@ async def index():
 
 
 @app.get("/ping")
-# async def pong(settings: Settings = Depends(get_settings)):
 async def pong():
     return {
         "ping": "pong!",

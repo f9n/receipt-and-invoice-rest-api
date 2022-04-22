@@ -1,3 +1,4 @@
+from unicodedata import category
 from fastapi import APIRouter, UploadFile, File
 
 from .receipt import router as receipt_router

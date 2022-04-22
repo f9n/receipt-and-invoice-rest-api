@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from fastapi import APIRouter, Depends, HTTPException, Body
+from fastapi import APIRouter, Depends, HTTPException
 from beanie import PydanticObjectId
 
 from app.models import ReceiptIn, ReceiptDB

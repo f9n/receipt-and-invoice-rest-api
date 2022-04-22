@@ -1,5 +1,4 @@
 import logging
-from functools import lru_cache
 
 from pydantic import BaseSettings
 
@@ -17,10 +16,5 @@ class Settings(CommonSettings):
     MONGODB_URL: str
     MONGODB_DB_NAME: str = "receipt-and-invoice"
 
-
-# @lru_cache()
-# def get_settings() -> BaseSettings:
-#     log.info("Loading config settings from the environment...")
-#     return Settings()
 
 settings = Settings()
