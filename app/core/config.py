@@ -7,14 +7,20 @@ from pydantic import BaseSettings
 log = logging.getLogger("uvicorn")
 
 
-class Settings(BaseSettings):
-    app_name: str = "Receipt Invoice OCR Rest API"
-    debug: bool = False
-    ocr_service_uri: str
-    mongodb_uri: str
+class CommonSettings(BaseSettings):
+    APP_NAME: str = "Receipt Invoice OCR Rest API"
+    DEBUG_MODE: bool = False
 
 
-@lru_cache()
-def get_settings() -> BaseSettings:
-    log.info("Loading config settings from the environment...")
-    return Settings()
+class Settings(CommonSettings):
+    OCR_SERVICE_URL: str
+    MONGODB_URL: str
+    MONGODB_DB_NAME: str = "receipt-and-invoice"
+
+
+# @lru_cache()
+# def get_settings() -> BaseSettings:
+#     log.info("Loading config settings from the environment...")
+#     return Settings()
+
+settings = Settings()
