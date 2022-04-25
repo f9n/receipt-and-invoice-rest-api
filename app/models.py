@@ -1,23 +1,13 @@
-import datetime
-
 from beanie import Document
-from pydantic import BaseModel
 
-from .schemas import ReceiptCreate
-
-
-class Metadata(BaseModel):
-    created_at: datetime.datetime = datetime.datetime.now(tz=datetime.timezone.utc)
-    created_by: str | None
-    # last_modified: datetime | None
-    # modified_by: str | None
+from .schemas import ReceiptCreate, Metadata, Image
 
 
 class ReceiptInDB(Document, ReceiptCreate):
     metadata: Metadata = Metadata()
 
     class Collection:
-        name = "receipts-2"
+        name = "receipts"
 
     class Config:
         allow_population_by_field_name = True
@@ -44,7 +34,7 @@ class ReceiptInDB(Document, ReceiptCreate):
         }
 
 
-class ReceiptOcrResultInDb(Document, ReceiptCreate):
+class ReceiptOcrResultInDB(Document, ReceiptCreate):
     metadata: Metadata = Metadata()
 
     class Collection:
@@ -54,12 +44,7 @@ class ReceiptOcrResultInDb(Document, ReceiptCreate):
         allow_population_by_field_name = True
 
 
-class Image(Document):
-    name: str
-    content_type: str
-    size: int
-    content: bytes | str
-
+class ImageInDB(Document, Image):
     metadata: Metadata = Metadata()
 
     class Collection:

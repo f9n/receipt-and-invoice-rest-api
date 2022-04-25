@@ -1,3 +1,4 @@
+import datetime
 import enum
 
 from pydantic import BaseModel
@@ -77,4 +78,26 @@ class ReceiptUpdate(BaseModel):
     products: list[Product] | None = None
 
     class Config:
+        allow_population_by_field_name = True
+
+
+class Metadata(BaseModel):
+    created_at: datetime.datetime = datetime.datetime.now(tz=datetime.timezone.utc)
+    created_by: str | None
+    # last_modified: datetime | None
+    # modified_by: str | None
+
+    class Config:
+        alias_generator = to_camel
+        allow_population_by_field_name = True
+
+
+class Image(BaseModel):
+    name: str
+    content_type: str
+    size: int
+    content: bytes | str
+
+    class Config:
+        alias_generator = to_camel
         allow_population_by_field_name = True

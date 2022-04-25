@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 from fastapi.responses import StreamingResponse
 
 from app.dependencies import get_image
-from app.models import Image
+from app.models import ImageInDB
 from app.schemas import ProductCategory
 from .receipt import router as receipt_router
 from .ocr import router as ocr_router
@@ -18,7 +18,7 @@ async def get_configs():
 
 
 @router.get("/images/{image_id}")
-async def get_image(image: Image = Depends(get_image)):
+async def get_image(image: ImageInDB = Depends(get_image)):
     content_type = image.content_type
 
     # def iterfile():

@@ -2,14 +2,11 @@ import logging
 import datetime
 
 from fastapi import APIRouter, HTTPException, UploadFile, File, Depends
-from fastapi.encoders import jsonable_encoder
 
-from app.models import Image, ReceiptOcrResultInDb
+from app.models import ImageInDB, ReceiptOcrResultInDB
 from app.schemas import Product, ProductCategory
 from app.dependencies import get_receipt_ocr_result
 from app.services import get_product_categories
-from app.database import get_database
-
 
 router = APIRouter()
 
@@ -25,7 +22,7 @@ async def ocr_result_from_receipt_image(image: UploadFile = File(...)):
         )
 
     image_content = await image.read()
-    image_db = await Image(
+    image_db = await ImageInDB(
         name=image.filename,
         content_type=image.content_type,
         size=len(image_content),
@@ -50,7 +47,7 @@ async def ocr_result_from_receipt_image(image: UploadFile = File(...)):
     # Move file cursor to beginning
     # await image.seek(0)
 
-    receipt_ocr_result = await ReceiptOcrResultInDb(
+    receipt_ocr_result = await ReceiptOcrResultInDB(
         firm=f"Okey: {datetime.datetime.now(tz=datetime.timezone.utc)}",
         no="021",
         date="22/05/2022",
@@ -73,40 +70,14 @@ async def ocr_result_from_receipt_image(image: UploadFile = File(...)):
 
 @router.get("/receipt")
 async def get_all_receipt_ocr_results():
-    return await ReceiptOcrResultInDb.find_all().to_list()
+    return await ReceiptOcrResultInDB.find_all().to_list()
 
 
 @router.get("/receipt/{image_id}")
 async def get_receipt_ocr_result(
-    receipt_ocr_result: ReceiptOcrResultInDb = Depends(get_receipt_ocr_result),
+    receipt_ocr_result: ReceiptOcrResultInDB = Depends(get_receipt_ocr_result),
 ):
     return receipt_ocr_result
-
-
-# return pymongo.send_file(filename, base="images")
-# @router.get("/download_csv_use_IO")
-# def download_csv_use_IO():
-#     csv_data = [
-#         ['name', 'sex', 'birthday'],
-#         ['user', 'boy', '2019-01-01'],
-#         ['张三', '里斯', '2019-01-01']
-#     ]
-#     # 创建一个 io 流
-#     io_stream = io.StringIO()
-#     writer = csv.writer(io_stream)
-#     for row in csv_data:
-#         writer.writerow(row)
-#     mem = io.BytesIO()
-#     mem.write(io_stream.getvalue().encode('utf-8'))
-#     # Change stream position
-#     mem.seek(0)
-#     io_stream.close()
-#     return StreamingResponse(
-#         mem, media_type="text/csv",
-#         headers={
-#             'content-disposition': "attachment; filename*=utf-8''{}".format(
-#                 quote("测试.csv"))
-#     })
 
 
 @router.post("/invoice")
