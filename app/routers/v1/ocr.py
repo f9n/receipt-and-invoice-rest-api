@@ -2,11 +2,14 @@ import logging
 import datetime
 
 from fastapi import APIRouter, HTTPException, UploadFile, File, Depends
+from fastapi.encoders import jsonable_encoder
 
-from app.models import ReceiptOcrResultInDb
+from app.models import Image, ReceiptOcrResultInDb
 from app.schemas import Product, ProductCategory
 from app.dependencies import get_receipt_ocr_result
 from app.services import get_product_categories
+from app.database import get_database
+
 
 router = APIRouter()
 
@@ -20,6 +23,20 @@ async def ocr_result_from_receipt_image(image: UploadFile = File(...)):
         raise HTTPException(
             status_code=405, detail="Allowed image files are in PNG or JPG format"
         )
+
+    image_content = await image.read()
+    image_db = await Image(
+        name=image.filename,
+        content_type=image.content_type,
+        size=len(image_content),
+        content=image_content,
+    ).create()
+
+    print(image_db.name)
+    print(image_db.id)
+    image_id = image_db.id
+
+    await image.seek(0)
 
     # async with aiofiles.open(filepath, 'wb') as f:
     #     while buffer := await image.read(1024):
@@ -39,7 +56,7 @@ async def ocr_result_from_receipt_image(image: UploadFile = File(...)):
         date="22/05/2022",
         total_amount="72,5",
         total_kdv="2,5",
-        image_id="616161",
+        image_id=image_id,
         products=[
             Product(
                 name="yag",

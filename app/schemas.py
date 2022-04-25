@@ -1,6 +1,7 @@
 import enum
 
 from pydantic import BaseModel
+from beanie import PydanticObjectId
 
 from .utils import to_camel
 
@@ -41,7 +42,7 @@ class Receipt(BaseModel):
 
 
 class ReceiptCreate(Receipt):
-    image_id: str
+    image_id: PydanticObjectId | str
 
     class Config:
         alias_generator = to_camel

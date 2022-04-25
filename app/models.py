@@ -52,3 +52,18 @@ class ReceiptOcrResultInDb(Document, ReceiptCreate):
 
     class Config:
         allow_population_by_field_name = True
+
+
+class Image(Document):
+    name: str
+    content_type: str
+    size: int
+    content: bytes | str
+
+    metadata: Metadata = Metadata()
+
+    class Collection:
+        name = "images"
+
+    class Config:
+        allow_population_by_field_name = True

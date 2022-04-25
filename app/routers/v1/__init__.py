@@ -1,10 +1,11 @@
-from io import BytesIO
+import io
 
-from fastapi import APIRouter, UploadFile, File
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi import APIRouter, Depends
+from fastapi.responses import StreamingResponse
 
+from app.dependencies import get_image
+from app.models import Image
 from app.schemas import ProductCategory
-
 from .receipt import router as receipt_router
 from .ocr import router as ocr_router
 
@@ -17,28 +18,16 @@ async def get_configs():
 
 
 @router.get("/images/{image_id}")
-async def get_image():
-    return {"message": "Send image"}
+async def get_image(image: Image = Depends(get_image)):
+    content_type = image.content_type
 
+    # def iterfile():
+    #     yield image.content
 
-# @router.get("/download/{name_file}")
-# def download_file(name_file: str):
-#     return FileResponse(path=getcwd() + "/" + name_file, media_type='application/octet-stream', filename=name_file)
+    out_image = io.BytesIO(image.content)
 
-# @router.get("/file/{name_file}")
-# def get_file(name_file: str):
-#     return FileResponse(path=getcwd() + "/" + name_file)
+    return StreamingResponse(out_image, media_type=content_type)
 
-# @app.post("/image_filter")
-# def image_filter(img: UploadFile = File(...)):
-#     original_image = Image.open(img.file)
-#     original_image = original_image.filter(ImageFilter.BLUR)
-
-#     filtered_image = BytesIO()
-#     original_image.save(filtered_image, "JPEG")
-#     filtered_image.seek(0)
-
-#     return StreamingResponse(filtered_image, media_type="image/jpeg")
 
 # def iterfile():
 #     with open(some_file_path, mode="rb") as file_like:
