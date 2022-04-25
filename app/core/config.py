@@ -13,6 +13,7 @@ class CommonSettings(BaseSettings):
 
 class Settings(CommonSettings):
     OCR_SERVICE_URL: str
+    PRODUCT_TEXT_CLASSIFICATION_URL: str
     MONGO_URL: str
     MONGO_DB: str = "receipt-and-invoice"
 

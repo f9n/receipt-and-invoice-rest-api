@@ -13,6 +13,7 @@ python-multipart = "^0.0.5"
 dnspython = "^2.2.1"
 beanie = "^1.10.8"
 motor = "^2.5.1"
+httpx = "^0.22.0"
 
 [tool.poetry.dev-dependencies]
 

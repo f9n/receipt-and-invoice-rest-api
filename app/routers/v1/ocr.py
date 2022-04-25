@@ -6,6 +6,7 @@ from fastapi import APIRouter, HTTPException, UploadFile, File, Depends
 from app.models import ReceiptOcrResultInDb
 from app.schemas import Product, ProductCategory
 from app.dependencies import get_receipt_ocr_result
+from app.services import get_product_categories
 
 router = APIRouter()
 
