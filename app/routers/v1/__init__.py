@@ -1,5 +1,6 @@
-from unicodedata import category
 from fastapi import APIRouter, UploadFile, File
+
+from app.schemas import ProductCategory
 
 from .receipt import router as receipt_router
 from .ocr import router as ocr_router
@@ -9,21 +10,12 @@ router = APIRouter()
 
 @router.get("/configs")
 async def get_configs():
-    return {
-        "product": {
-            "categories": ["giyim", "icecek", "yiyecek", "teknoloji", "kirtasiye"]
-        }
-    }
+    return {"product": {"categories": ProductCategory.list()}}
 
 
 @router.get("/images/{image_id}")
 async def get_image():
     return {"message": "Send image"}
-
-
-@router.post("/upload")
-def upload_file(file: UploadFile = File(...)):
-    return {"name": file.filename}
 
 
 router.include_router(

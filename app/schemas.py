@@ -5,7 +5,13 @@ from pydantic import BaseModel
 from .utils import to_camel
 
 
-class ProductCategory(str, enum.Enum):
+class ExtendedEnum(enum.Enum):
+    @classmethod
+    def list(cls):
+        return list(map(lambda c: c.value, cls))
+
+
+class ProductCategory(ExtendedEnum):
     GIYIM = "giyim"
     YIYECEK = "yiyecek"
     ICECEK = "icecek"
