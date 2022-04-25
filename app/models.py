@@ -1,82 +1,36 @@
-import enum
+import datetime
 
-from pydantic import BaseModel
 from beanie import Document
+from pydantic import BaseModel
 
-from .utils import to_camel
-
-
-class ProductCategory(str, enum.Enum):
-    GIYIM = "giyim"
-    YIYECEK = "yiyecek"
-    ICECEK = "icecek"
-    ELEKTRONIK = "elektronik"
-    KIRTASIYE = "kirtasiye"
+from .schemas import ReceiptCreate
 
 
-class Product(BaseModel):
-    name: str
-    quantity: int
-    unit_price: str
-    ratio_kdv: int
-    category: ProductCategory
-
-    class Config:
-        alias_generator = to_camel
-        allow_population_by_field_name = True
+class Metadata(BaseModel):
+    created_at: datetime.datetime = datetime.datetime.now(tz=datetime.timezone.utc)
+    created_by: str | None
+    # last_modified: datetime | None
+    # modified_by: str | None
 
 
-class ReceiptIn(BaseModel):
-    image_id: str
-    firm: str
-    no: str
-    date: str
-    total_amount: str
-    total_kdv: str
-    products: list[Product]
-
-    class Config:
-        alias_generator = to_camel
-        allow_population_by_field_name = True
-        schema_extra = {
-            "example": {
-                "ImageId": "6161",
-                "Firm": "Ozocr A.S.",
-                "No": "003",
-                "Date": "11/01/2021",
-                "TotalAmount": "85,6",
-                "TotalKdv": "5,6",
-                "Products": [
-                    {
-                        "Name": "cay",
-                        "Quantity": 2,
-                        "UnitPrice": "40",
-                        "RatioKdv": 8,
-                        "Category": "icecek",
-                    }
-                ],
-            }
-        }
-
-
-class ReceiptDB(Document, ReceiptIn):
-    receipt_created_date: str | None
+class ReceiptInDB(Document, ReceiptCreate):
+    metadata: Metadata = Metadata()
 
     class Collection:
-        name = "receipts"
+        name = "receipts-2"
 
     class Config:
         allow_population_by_field_name = True
         schema_extra = {
             "example": {
                 "_id": "5eb7cf5a86d9755df3a6c593",
-                "ReceiptCreatedDate": "22/04/2022 22:38:40",
                 "ImageId": "6161",
                 "Firm": "Ozocr A.S.",
                 "No": "003",
                 "Date": "11/01/2021",
                 "TotalAmount": "85,6",
                 "TotalKdv": "5,6",
+                "Metadata": {"CreatedAt": "22/04/2022 22:38:40", "CreatedBy": "null"},
                 "Products": [
                     {
                         "Name": "cay",

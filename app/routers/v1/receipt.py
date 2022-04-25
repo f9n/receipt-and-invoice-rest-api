@@ -1,45 +1,46 @@
 from datetime import datetime
 
-from fastapi import APIRouter, Depends, HTTPException
-from beanie import PydanticObjectId
+from fastapi import APIRouter, Depends, Body
 
-from app.models import ReceiptIn, ReceiptDB
+from app.models import ReceiptInDB
+from app.schemas import ReceiptCreate, ReceiptUpdate
+
+from app.dependencies import get_receipt
 
 router = APIRouter()
 
 
-async def get_receipt(receipt_id: PydanticObjectId) -> ReceiptDB:
-    receipt = await ReceiptDB.get(receipt_id)
-    if receipt is None:
-        raise HTTPException(status_code=404, detail="Receipt not found")
-    return receipt
-
-
-@router.post("/", response_model=ReceiptDB)
-async def create_receipt(receipt: ReceiptIn):
-    receipt_created_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-    data = await ReceiptDB(
-        **receipt.dict(), receipt_created_date=receipt_created_date
+@router.post("/", response_model=ReceiptInDB)
+async def create_receipt(receipt: ReceiptCreate):
+    # receipt_created_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    data = await ReceiptInDB(
+        **receipt.dict(),
+        # receipt_created_date=receipt_created_date
     ).create()
     return data
 
 
-@router.get("/{receipt_id}", response_model=ReceiptDB)
-async def get_receipt(receipt: ReceiptDB = Depends(get_receipt)):
+@router.get("/{receipt_id}", response_model=ReceiptInDB)
+async def get_receipt(receipt: ReceiptInDB = Depends(get_receipt)):
     return receipt
 
 
-@router.put("/{receipt_id}")
-async def update_receipt(receipt: ReceiptDB = Depends(get_receipt)):
-    return {"message": "@TODO: Receipt updated!"}
+@router.put("/{receipt_id}", response_model=ReceiptInDB)
+async def update_receipt(
+    receipt_update: ReceiptUpdate = Body(...),
+    receipt: ReceiptInDB = Depends(get_receipt),
+):
+    receipt = receipt.copy(update=receipt_update.dict(exclude_unset=True))
+    await receipt.save()
+    return receipt
 
 
 @router.delete("/{receipt_id}")
-async def delete_receipt(receipt: ReceiptDB = Depends(get_receipt)):
+async def delete_receipt(receipt: ReceiptInDB = Depends(get_receipt)):
     await receipt.delete()
     return {"message": "Receipt deleted!"}
 
 
-@router.get("/", response_model=list[ReceiptDB])
+@router.get("/", response_model=list[ReceiptInDB])
 async def get_all_receipts():
-    return await ReceiptDB.find_all().to_list()
+    return await ReceiptInDB.find_all().to_list()
