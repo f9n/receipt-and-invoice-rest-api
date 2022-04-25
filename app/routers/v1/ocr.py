@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException, UploadFile, File, Depends
 from app.models import ImageInDB, ReceiptOcrResultInDB
 from app.schemas import Product, ProductCategory
 from app.dependencies import get_receipt_ocr_result
-from app.services import get_product_categories
+from app.services import get_product_categories, send_ocr_request
 
 router = APIRouter()
 
@@ -34,6 +34,9 @@ async def ocr_result_from_receipt_image(image: UploadFile = File(...)):
     image_id = image_db.id
 
     await image.seek(0)
+
+    # result = await send_ocr_request(file=image, language="tur")
+    # print(result)
 
     # async with aiofiles.open(filepath, 'wb') as f:
     #     while buffer := await image.read(1024):
