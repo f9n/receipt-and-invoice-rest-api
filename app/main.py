@@ -1,14 +1,13 @@
+import logging
 import time
 
 from fastapi import FastAPI, Request, status
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-import motor
-import beanie
 
 from app.core.config import settings
-from app.models import ReceiptDB
+from app.database import connect, disconnect
 from app.routers import v1
 from . import __version__
 
@@ -30,7 +29,8 @@ async def add_process_time_header(request: Request, call_next):
     start_time = time.time()
     response = await call_next(request)
     process_time = time.time() - start_time
-    print(f"request processed in {process_time} s")
+    logging.info(f"request processed in {process_time} s")
+    response.headers["X-Process-Time"] = str(process_time)
     return response
 
 
@@ -72,16 +72,11 @@ def perform_healthcheck():
 
 @app.on_event("startup")
 async def app_init():
-    app.mongodb_client = motor.motor_asyncio.AsyncIOMotorClient(settings.MONGODB_URL)
-
-    await beanie.init_beanie(
-        database=app.mongodb_client[settings.MONGODB_DB_NAME],
-        document_models=[ReceiptDB],
-    )
+    await connect()
 
     app.include_router(v1.router, prefix="/api/v1")
 
 
 @app.on_event("shutdown")
 async def app_shutdown():
-    app.mongodb_client.close()
+    await disconnect()

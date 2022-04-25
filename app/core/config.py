@@ -13,8 +13,8 @@ class CommonSettings(BaseSettings):
 
 class Settings(CommonSettings):
     OCR_SERVICE_URL: str
-    MONGODB_URL: str
-    MONGODB_DB_NAME: str = "receipt-and-invoice"
+    MONGO_URL: str
+    MONGO_DB: str = "receipt-and-invoice"
 
 
 settings = Settings()
