@@ -1,6 +1,6 @@
 import logging
 
-from fastapi import APIRouter, HTTPException, UploadFile, File, StreamingResponse
+from fastapi import APIRouter, HTTPException, UploadFile, File
 
 from app.database import ReceiptInDB
 from app.schemas import Product, ProductCategory
