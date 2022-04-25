@@ -1,15 +1,17 @@
 import logging
+import datetime
 
-from fastapi import APIRouter, HTTPException, UploadFile, File
+from fastapi import APIRouter, HTTPException, UploadFile, File, Depends
 
-from app.database import ReceiptInDB
+from app.models import ReceiptOcrResultInDb
 from app.schemas import Product, ProductCategory
+from app.dependencies import get_receipt_ocr_result
 
 router = APIRouter()
 
 
 @router.post("/receipt")
-async def ocr_from_receipt(image: UploadFile = File(...)):
+async def ocr_result_from_receipt_image(image: UploadFile = File(...)):
     print(f"Filename: {image.filename}")
     print(f"Filename Content Type: {image.content_type}")
 
@@ -18,14 +20,20 @@ async def ocr_from_receipt(image: UploadFile = File(...)):
             status_code=405, detail="Allowed image files are in PNG or JPG format"
         )
 
+    # async with aiofiles.open(filepath, 'wb') as f:
+    #     while buffer := await image.read(1024):
+    #         await f.write(buffer)
+
+    #     await f.close()
+
     # filename = secure_filename(f"{str(uuid.uuid4())}_{image.filename}")
     # id = pymongo.save_file(filename, image, base="images")
 
     # Move file cursor to beginning
-    # image.seek(0)
+    # await image.seek(0)
 
-    receipt = ReceiptInDB(
-        firm="Okey",
+    receipt_ocr_result = await ReceiptOcrResultInDb(
+        firm=f"Okey: {datetime.datetime.now(tz=datetime.timezone.utc)}",
         no="021",
         date="22/05/2022",
         total_amount="72,5",
@@ -40,16 +48,24 @@ async def ocr_from_receipt(image: UploadFile = File(...)):
                 category=ProductCategory.YIYECEK,
             )
         ],
-    )
-    return receipt
+    ).create()
+
+    return receipt_ocr_result
+
+
+@router.get("/receipt")
+async def get_all_receipt_ocr_results():
+    return await ReceiptOcrResultInDb.find_all().to_list()
 
 
 @router.get("/receipt/{image_id}")
-async def get_receipt_ocr_result():
-    return {"message": "Send receipt ocr result"}
-    # return pymongo.send_file(filename, base="images")
+async def get_receipt_ocr_result(
+    receipt_ocr_result: ReceiptOcrResultInDb = Depends(get_receipt_ocr_result),
+):
+    return receipt_ocr_result
 
 
+# return pymongo.send_file(filename, base="images")
 # @router.get("/download_csv_use_IO")
 # def download_csv_use_IO():
 #     csv_data = [
@@ -76,8 +92,13 @@ async def get_receipt_ocr_result():
 
 
 @router.post("/invoice")
-async def ocr_from_invoice():
+async def ocr_result_from_invoice_image(image: UploadFile = File(...)):
     return {"message": "Get image and Send image_id field to you"}
+
+
+@router.get("/invoice")
+async def get_all_invoice_ocr_results():
+    return {"message": "Send all invoice ocr result"}
 
 
 @router.get("/invoice/{image_id}")

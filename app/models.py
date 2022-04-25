@@ -42,3 +42,13 @@ class ReceiptInDB(Document, ReceiptCreate):
                 ],
             }
         }
+
+
+class ReceiptOcrResultInDb(Document, ReceiptCreate):
+    metadata: Metadata = Metadata()
+
+    class Collection:
+        name = "receipts-ocr-results"
+
+    class Config:
+        allow_population_by_field_name = True

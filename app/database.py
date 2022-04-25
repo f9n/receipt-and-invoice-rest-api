@@ -6,7 +6,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.errors import ServerSelectionTimeoutError
 
 from app.core.config import settings
-from app.models import ReceiptInDB
+from app.models import ReceiptInDB, ReceiptOcrResultInDb
 
 
 class Database:
@@ -31,7 +31,7 @@ async def connect():
     logging.info("Connected.")
     await beanie.init_beanie(
         database=db.motor_client[settings.MONGO_DB],
-        document_models=[ReceiptInDB],
+        document_models=[ReceiptInDB, ReceiptOcrResultInDb],
     )
 
 
