@@ -11,7 +11,7 @@ from app.services import get_product_categories, send_ocr_request
 router = APIRouter()
 
 
-@router.post("/receipt")
+@router.post("/receipt", response_model=ReceiptOcrResultInDB)
 async def ocr_result_from_receipt_image(image: UploadFile = File(...)):
     print(f"Filename: {image.filename}")
     print(f"Filename Content Type: {image.content_type}")
@@ -71,12 +71,12 @@ async def ocr_result_from_receipt_image(image: UploadFile = File(...)):
     return receipt_ocr_result
 
 
-@router.get("/receipt")
+@router.get("/receipt", response_model=list[ReceiptOcrResultInDB])
 async def get_all_receipt_ocr_results():
     return await ReceiptOcrResultInDB.find_all().to_list()
 
 
-@router.get("/receipt/{image_id}")
+@router.get("/receipt/{image_id}", response_model=ReceiptOcrResultInDB)
 async def get_receipt_ocr_result(
     receipt_ocr_result: ReceiptOcrResultInDB = Depends(get_receipt_ocr_result),
 ):
