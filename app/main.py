@@ -4,7 +4,7 @@ import time
 from fastapi import FastAPI, Request, status
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
+from fastapi.logger import logger as fastapi_logger
 
 from app.core.config import settings
 from app.database import connect, disconnect
@@ -12,6 +12,17 @@ from app.routers import v1
 from . import __version__
 
 app = FastAPI(title=settings.APP_NAME, debug=settings.DEBUG_MODE, version=__version__)
+gunicorn_error_logger = logging.getLogger("gunicorn.error")
+gunicorn_logger = logging.getLogger("gunicorn")
+uvicorn_access_logger = logging.getLogger("uvicorn.access")
+uvicorn_access_logger.handlers = gunicorn_error_logger.handlers
+
+fastapi_logger.handlers = gunicorn_error_logger.handlers
+
+if settings.DEBUG_MODE == False:
+    fastapi_logger.setLevel(gunicorn_logger.level)
+else:
+    fastapi_logger.setLevel(logging.DEBUG)
 
 app.add_middleware(
     CORSMiddleware,

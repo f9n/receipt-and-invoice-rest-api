@@ -1,10 +1,10 @@
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, Body
+from fastapi.logger import logger
 
 from app.models import ReceiptInDB
 from app.schemas import ReceiptCreate, ReceiptUpdate
-
 from app.dependencies import get_receipt
 
 router = APIRouter()
@@ -43,4 +43,5 @@ async def delete_receipt(receipt: ReceiptInDB = Depends(get_receipt)):
 
 @router.get("/", response_model=list[ReceiptInDB])
 async def get_all_receipts():
+    logger.info("Get All Recipts")
     return await ReceiptInDB.find_all().to_list()

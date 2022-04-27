@@ -2,6 +2,7 @@ import logging
 import datetime
 
 from fastapi import APIRouter, HTTPException, UploadFile, File, Depends
+from fastapi.logger import logger
 
 from app.models import ImageInDB, ReceiptOcrResultInDB
 from app.schemas import Product, ProductCategory
@@ -13,8 +14,8 @@ router = APIRouter()
 
 @router.post("/receipt", response_model=ReceiptOcrResultInDB)
 async def ocr_result_from_receipt_image(image: UploadFile = File(...)):
-    print(f"Filename: {image.filename}")
-    print(f"Filename Content Type: {image.content_type}")
+    logger.info(f"Filename: {image.filename}")
+    logger.info(f"Filename Content Type: {image.content_type}")
 
     if image.content_type not in ["image/png", "image/jpg", "image/jpeg"]:
         raise HTTPException(
@@ -29,14 +30,14 @@ async def ocr_result_from_receipt_image(image: UploadFile = File(...)):
         content=image_content,
     ).create()
 
-    print(image_db.name)
-    print(image_db.id)
+    logger.info(f"ImageDb Name: {image_db.name}")
+    logger.info(f"ImageDb Id: {image_db.id}")
     image_id = image_db.id
 
     await image.seek(0)
+    logger.info(f"Image Seek to 0")
 
     # result = await send_ocr_request(file=image, language="tur")
-    # print(result)
 
     # async with aiofiles.open(filepath, 'wb') as f:
     #     while buffer := await image.read(1024):
@@ -67,6 +68,8 @@ async def ocr_result_from_receipt_image(image: UploadFile = File(...)):
             )
         ],
     ).create()
+
+    logger.info("Created Receipt Ocr Result")
 
     return receipt_ocr_result
 
