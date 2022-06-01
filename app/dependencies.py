@@ -1,7 +1,13 @@
 from fastapi import HTTPException
 from beanie import PydanticObjectId
 
-from app.models import ImageInDB, ReceiptInDB, ReceiptOcrResultInDB
+from app.models import (
+    ImageInDB,
+    ReceiptInDB,
+    ReceiptOcrResultInDB,
+    InvoiceInDB,
+    InvoiceOcrResultInDB,
+)
 
 
 async def get_receipt(receipt_id: PydanticObjectId) -> ReceiptInDB:
@@ -18,6 +24,22 @@ async def get_receipt_ocr_result(image_id: str) -> ReceiptOcrResultInDB:
     if receipt_ocr_result is None:
         raise HTTPException(status_code=404, detail="Receipt Ocr Result not found")
     return receipt_ocr_result
+
+
+async def get_invoice(invoice_id: PydanticObjectId) -> InvoiceInDB:
+    invoice = await InvoiceInDB.get(invoice_id)
+    if invoice is None:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    return invoice
+
+
+async def get_invoice_ocr_result(image_id: str) -> InvoiceOcrResultInDB:
+    invoice_ocr_result = await InvoiceOcrResultInDB.find_all(
+        InvoiceOcrResultInDB.image_id == image_id
+    )
+    if invoice_ocr_result is None:
+        raise HTTPException(status_code=404, detail="Invoice Ocr Result not found")
+    return invoice_ocr_result
 
 
 async def get_image(image_id: PydanticObjectId) -> ImageInDB:

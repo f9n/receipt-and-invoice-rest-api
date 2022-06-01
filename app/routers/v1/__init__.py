@@ -7,6 +7,7 @@ from app.dependencies import get_image
 from app.models import ImageInDB
 from app.schemas import ProductCategory
 from .receipt import router as receipt_router
+from .invoice import router as invoice_router
 from .ocr import router as ocr_router
 
 router = APIRouter()
@@ -45,4 +46,10 @@ router.include_router(
     receipt_router,
     prefix="/receipts",
     tags=["receipts"],
+)
+
+router.include_router(
+    invoice_router,
+    prefix="/invoices",
+    tags=["invoices"],
 )

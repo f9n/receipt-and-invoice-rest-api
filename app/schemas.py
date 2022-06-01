@@ -81,6 +81,54 @@ class ReceiptUpdate(BaseModel):
         allow_population_by_field_name = True
 
 
+class Invoice(BaseModel):
+    firm: str
+    no: str
+    date: str
+    total_amount: str
+    total_kdv: str
+    products: list[Product]
+
+
+class InvoiceCreate(Invoice):
+    image_id: PydanticObjectId | str
+
+    class Config:
+        alias_generator = to_camel
+        allow_population_by_field_name = True
+        schema_extra = {
+            "example": {
+                "ImageId": "6161",
+                "Firm": "Ozocr A.S.",
+                "No": "003",
+                "Date": "11/01/2021",
+                "TotalAmount": "85,6",
+                "TotalKdv": "5,6",
+                "Products": [
+                    {
+                        "Name": "cay",
+                        "Quantity": 2,
+                        "UnitPrice": "40",
+                        "RatioKdv": 8,
+                        "Category": "icecek",
+                    }
+                ],
+            }
+        }
+
+
+class InvoiceUpdate(BaseModel):
+    firm: str | None = None
+    no: str | None = None
+    date: str | None = None
+    total_amount: str | None = None
+    total_kdv: str | None = None
+    products: list[Product] | None = None
+
+    class Config:
+        allow_population_by_field_name = True
+
+
 class Metadata(BaseModel):
     created_at: datetime.datetime = datetime.datetime.now(tz=datetime.timezone.utc)
     created_by: str | None
