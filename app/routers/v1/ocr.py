@@ -80,7 +80,7 @@ async def get_all_receipt_ocr_results():
 
 
 @router.get("/receipt/{image_id}", response_model=ReceiptOcrResultInDB)
-async def get_receipt_ocr_result(
+async def get_receipt_ocr_result_with_image_id(
     receipt_ocr_result: ReceiptOcrResultInDB = Depends(get_receipt_ocr_result),
 ):
     return receipt_ocr_result
@@ -154,7 +154,7 @@ async def get_all_invoice_ocr_results():
 
 
 @router.get("/invoice/{image_id}", response_model=InvoiceOcrResultInDB)
-async def get_invoice_ocr_result(
+async def get_invoice_ocr_result_with_image_id(
     invoice_ocr_result: InvoiceOcrResultInDB = Depends(get_invoice_ocr_result),
 ):
     return invoice_ocr_result
