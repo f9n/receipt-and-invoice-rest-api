@@ -22,3 +22,9 @@ async def send_ocr_request(file, language="eng"):
     async with httpx.AsyncClient() as client:
         r = await client.post(f"{settings.OCR_SERVICE_URL}", data=payload, files=files)
         return r.json()
+
+async def send_ocr_request2(file):
+    files = {"uploadedImage": file}
+    async with httpx.AsyncClient() as client:
+        r = await client.post(f"{settings.OCR_SERVICE_URL}/api/upload", files=files)
+        return r.json()

@@ -1,5 +1,5 @@
-import logging
 import datetime
+from pprint import pprint
 
 from fastapi import APIRouter, HTTPException, UploadFile, File, Depends
 from fastapi.logger import logger
@@ -7,7 +7,7 @@ from fastapi.logger import logger
 from app.models import ImageInDB, ReceiptOcrResultInDB, InvoiceOcrResultInDB
 from app.schemas import Product, ProductCategory
 from app.dependencies import get_receipt_ocr_result, get_invoice_ocr_result
-from app.services import get_product_categories, send_ocr_request
+from app.services import get_product_categories, send_ocr_request, send_ocr_request2
 
 router = APIRouter()
 
@@ -37,19 +37,8 @@ async def ocr_result_from_receipt_image(image: UploadFile = File(...)):
     await image.seek(0)
     logger.info(f"Image Seek to 0")
 
-    # result = await send_ocr_request(file=image, language="tur")
-
-    # async with aiofiles.open(filepath, 'wb') as f:
-    #     while buffer := await image.read(1024):
-    #         await f.write(buffer)
-
-    #     await f.close()
-
-    # filename = secure_filename(f"{str(uuid.uuid4())}_{image.filename}")
-    # id = pymongo.save_file(filename, image, base="images")
-
-    # Move file cursor to beginning
-    # await image.seek(0)
+    result = await send_ocr_request2(file=image.file)
+    logger.info(result)
 
     receipt_ocr_result = await ReceiptOcrResultInDB(
         firm=f"Okey: {datetime.datetime.now(tz=datetime.timezone.utc)}",
