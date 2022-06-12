@@ -27,7 +27,7 @@ class ReceiptInDB(Document, ReceiptCreate):
                         "Quantity": 2,
                         "UnitPrice": "40",
                         "RatioKdv": 8,
-                        "Category": "icecek",
+                        "Category": "yiyecek",
                     }
                 ],
             }
@@ -58,7 +58,7 @@ class ReceiptOcrResultInDB(Document, ReceiptCreate):
                         "Quantity": 2,
                         "UnitPrice": "40",
                         "RatioKdv": 8,
-                        "Category": "icecek",
+                        "Category": "yiyecek",
                     }
                 ],
             }
@@ -89,7 +89,7 @@ class InvoiceInDB(Document, InvoiceCreate):
                         "Quantity": 2,
                         "UnitPrice": "40",
                         "RatioKdv": 8,
-                        "Category": "icecek",
+                        "Category": "yiyecek",
                     }
                 ],
             }
@@ -120,7 +120,7 @@ class InvoiceOcrResultInDB(Document, InvoiceCreate):
                         "Quantity": 2,
                         "UnitPrice": "40",
                         "RatioKdv": 8,
-                        "Category": "icecek",
+                        "Category": "yiyecek",
                     }
                 ],
             }

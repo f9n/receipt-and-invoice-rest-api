@@ -14,11 +14,11 @@ class ExtendedEnum(enum.Enum):
 
 
 class ProductCategory(ExtendedEnum):
-    GIYIM = "giyim"
-    YIYECEK = "yiyecek"
-    ICECEK = "icecek"
     ELEKTRONIK = "elektronik"
     KIRTASIYE = "kirtasiye"
+    KOZMETIK = "kozmetik"
+    TEMIZLIK = "temizlik"
+    YIYECEK = "yiyecek"
 
 
 class Product(BaseModel):
@@ -62,7 +62,7 @@ class ReceiptCreate(Receipt):
                         "Quantity": 2,
                         "UnitPrice": "40",
                         "RatioKdv": 8,
-                        "Category": "icecek",
+                        "Category": "yiyecek",
                     }
                 ],
             }
@@ -110,7 +110,7 @@ class InvoiceCreate(Invoice):
                         "Quantity": 2,
                         "UnitPrice": "40",
                         "RatioKdv": 8,
-                        "Category": "icecek",
+                        "Category": "yiyecek",
                     }
                 ],
             }

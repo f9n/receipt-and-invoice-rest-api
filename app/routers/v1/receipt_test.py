@@ -15,7 +15,7 @@ dummy_receipts: list[Receipt] = [
                 "ratio_kdv": 8,
                 "quantity": 2,
                 "unit_price": "4,5",
-                "category": "icecek",
+                "category": "yiyecek",
             },
             {
                 "name": "Makarna",
@@ -41,7 +41,7 @@ dummy_receipts: list[Receipt] = [
                 "ratio_kdv": 8,
                 "quantity": 2,
                 "unit_price": "4,5",
-                "category": "icecek",
+                "category": "yiyecek",
             },
             {
                 "name": "Et",
