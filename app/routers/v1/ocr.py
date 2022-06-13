@@ -45,6 +45,11 @@ async def ocr_result_from_receipt_image(image: UploadFile = File(...)):
     for receipt_p in result.get("products", []):
         receipt_p_name = receipt_p.get("name", "")
         receipt_p_category = receipt_p.get("category", ProductCategory.YIYECEK)
+        receipt_p_category_ml_result = await get_product_categories([receipt_p_name])
+        if len(receipt_p_category_ml_result) > 0:
+            receipt_p_category = receipt_p_category_ml_result[0]
+
+        logger.info("Receipt Product Category ML Result: ", receipt_p_category)
         receipt_products.append(
             Product(
                 name=receipt_p_name,
