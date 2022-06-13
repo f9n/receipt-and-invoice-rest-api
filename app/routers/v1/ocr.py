@@ -50,7 +50,8 @@ async def ocr_result_from_receipt_image(image: UploadFile = File(...)):
         # if len(receipt_p_category_ml_result) > 0:
         #     receipt_p_category = receipt_p_category_ml_result[0]
 
-        logger.info("Receipt Product Category ML Result: ", receipt_p_category)
+        logger.info("Receipt Product Category ML Result: ")
+        logger.info(receipt_p_category)
         receipt_products.append(
             Product(
                 name=receipt_p_name,
