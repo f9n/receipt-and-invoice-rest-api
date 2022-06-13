@@ -40,22 +40,29 @@ async def ocr_result_from_receipt_image(image: UploadFile = File(...)):
     result = await send_ocr_request2(file=image.file)
     logger.info(result)
 
-    receipt_ocr_result = await ReceiptOcrResultInDB(
-        firm=f"Okey: {datetime.datetime.now(tz=datetime.timezone.utc)}",
-        no="021",
-        date="22/05/2022",
-        total_amount="72,5",
-        total_kdv="2,5",
-        image_id=image_id,
-        products=[
+    receipt_products = []
+
+    for receipt_p in result.get("products", []):
+        receipt_p_name = receipt_p.get("name", "")
+        receipt_p_category = receipt_p.get("category", ProductCategory.YIYECEK)
+        receipt_products.append(
             Product(
-                name="yag",
-                quantity=1,
-                unit_price="70",
-                ratio_kdv=8,
-                category=ProductCategory.YIYECEK,
+                name=receipt_p_name,
+                quantity=receipt_p.get("quantity", 1),
+                unit_price=receipt_p.get("unitPrice", ""),
+                ratio_kdv=receipt_p.get("ratiokdv", ""),
+                category=receipt_p_category,
             )
-        ],
+        )
+
+    receipt_ocr_result = await ReceiptOcrResultInDB(
+        firm=result.get("firm", ""),
+        no=result.get("no", ""),
+        date=result.get("date", ""),
+        total_amount=result.get("total_amount", ""),
+        total_kdv=result.get("total_kdv", ""),
+        image_id=image_id,
+        products=receipt_products,
     ).create()
 
     logger.info("Created Receipt Ocr Result")
